@@ -20,23 +20,43 @@ public class ProductRepository {
 
     }
 
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public Product getOne(int id){
-        for (Product product : this.products) {
-            if (product.getId() == id) {
-                return product;
+    public List<Product> getProducts(String category) {
+        if (category == null || category.isBlank()) {
+            return this.products;
+        }
+        List<Product> result = new ArrayList<>();
+        for (Product p : products){
+            if (p.getCategory().equalsIgnoreCase(category)) {
+                result.add(p);
             }
         }
 
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found");
+        if (result.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No products of the provided category were found.");
+        }
 
+        return result;
+    }
+
+    public Product getOne(int id) {
+        for (Product p : products) {
+            if (p.getId() == id) return p;
+        }
+
+        throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Product not found."
+        );
     }
 
     public void createProduct(Product product) {
-        products.add(product);
+        for (Product p : this.products) {
+            if (p.getName().equalsIgnoreCase((product.getName()))) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product with provided name already exists");
+            }
+
+        }
+       products.add(product);
     }
 
     public Product updateProduct(int id, ProductCreateDto body) {

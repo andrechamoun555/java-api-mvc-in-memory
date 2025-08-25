@@ -22,21 +22,15 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Product>> getProducts(){
-        return ResponseEntity.ok(productRepository.getProducts());
+    public List<Product> getProducts(@RequestParam(required = false) String category) {
+        return productRepository.getProducts(category);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable int id) {
-        try {
-
-            return ResponseEntity.ok(productRepository.getOne(id));
-        } catch (Exception e) {
-
-
-        }
-        return ResponseEntity.notFound().build();
+    public Product getProductById(@PathVariable int id) {
+        return productRepository.getOne(id);
     }
+
 
     @PostMapping()
     public ResponseEntity<Product> createProduct(@RequestBody ProductCreateDto productCreateDto) {
